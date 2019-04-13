@@ -38,6 +38,9 @@ const DrawObject = {
     this.fillShape = function() {
       context.fill();
     };
+    this.reDefineSize = function(rad) {
+      this.radius = rad;
+    };
     this.draw = function() {
       const collisionPos = this.isCollisionActive(this.canvasElement);
       this.manageCollision(collisionPos);
@@ -65,10 +68,10 @@ const DrawObject = {
         x: 0,
         y: 0
       };
-      if ((this.x - this.radius) < 0 || (this.x + this.radius) >= this.canvasElement.width) {
+      if ((this.x - this.radius) <= 0 || (this.x + this.radius) >= this.canvasElement.width) {
         result.x = 0 - this.Vx;
       }
-      if ((this.y - this.radius) < 0 || (this.y + this.radius) >= this.canvasElement.height) {
+      if ((this.y - this.radius) <= 0 || (this.y + this.radius) >= this.canvasElement.height) {
         result.y = 0 - this.Vy;
       }
 
@@ -86,14 +89,21 @@ if (!ctx) {
 console.log("Context inited !!");
 
 
-let circle = new DrawObject.Circle(ctx, 100, 100, 100, canvas);
-circle.setVelocity(15, 10);
-
+const circle = new DrawObject.Circle(ctx, 100, 100, 100, canvas);
+circle.setVelocity(5, 5);
+let size = 5;
+let growingFactor = 5;
 CanvasMainLoop = function() {
   Utils.ClearCanvas(ctx, canvas);
   circle.defineFillStyle("rgb(200, 0, 0)");
   circle.draw();
-
+  if (size > 100) {
+    growingFactor = -1;
+  } else if (size < 5) {
+    growingFactor = 1;
+  }
+  circle.reDefineSize(size);
+  size += growingFactor;
   setTimeout(CanvasMainLoop, 5, ctx, canvas);
 }
 CanvasMainLoop();
