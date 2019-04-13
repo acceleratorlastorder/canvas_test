@@ -10,39 +10,70 @@ const Utils = {
   }
 };
 const DrawObject = {
-  Circle: function Circle(context, x, y, z, canvasElement) {
+  Circle: function Circle(context, x, y, radius, canvasElement) {
     this.x = x || 0;
     this.y = y || 0;
-    this.z = z || 0;
+    this.radius = radius || 0;
+    this.Vx = 0;
+    this.Vy = 0;
     this.fillStyle = null;
     this.canvasElement = canvasElement;
+    this.diameter = this.radius * 2;
     this.createShape = function() {
       context.beginPath();
       context.lineWidth = 1;
-      context.arc(this.x, this.y, this.z, 0, 2 * Math.PI);
-    }
+      context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    };
     this.addBorder = function() {
       context.stroke();
-    }
+    };
+    this.setVelocity = function(x, y) {
+      this.Vx = x;
+      this.Vy = y;
+    };
     this.defineFillStyle = function(style) {
       this.fillStyle = style || Utils.COLOR.black;
       ctx.fillStyle = this.fillStyle;
-    }
+    };
     this.fillShape = function() {
       context.fill();
-    }
+    };
     this.draw = function() {
-      this.isCollisionActive(this.canvasElement);
+      const collisionPos = this.isCollisionActive(this.canvasElement);
+      this.manageCollision(collisionPos);
+      if (this.Vx != 0 || this.Vy != 0) {
+        this.assignPositionFromVelocity();
+      }
       this.createShape();
       this.fillShape();
       this.addBorder();
+    };
+    this.assignPositionFromVelocity = function() {
+      this.x += this.Vx;
+      this.y += this.Vy;
+    };
+    this.manageCollision = function(collisionPos) {
+      if (collisionPos.x != 0) {
+        this.Vx = collisionPos.x != 0 ? collisionPos.x : this.Vx;
+      }
+      if (collisionPos.y != 0) {
+        this.Vy = collisionPos.y != 0 ? collisionPos.y : this.Vy;
+      }
     }
     this.isCollisionActive = function() {
-      if (x < 0 || x > this.canvasElement.width) {
-        return x - this.canvasElement.width;
+      const result = {
+        x: 0,
+        y: 0
+      };
+      if ((this.x - this.radius) < 0 || (this.x + this.radius) >= this.canvasElement.width) {
+        result.x = 0 - this.Vx;
       }
-      return null;
-    }
+      if ((this.y - this.radius) < 0 || (this.y + this.radius) >= this.canvasElement.height) {
+        result.y = 0 - this.Vy;
+      }
+
+      return result;
+    };
   }
 };
 const ITEMS = {};
@@ -55,14 +86,14 @@ if (!ctx) {
 console.log("Context inited !!");
 
 
-let circle = new DrawObject.Circle(ctx, 100, 100, 90, canvas);
+let circle = new DrawObject.Circle(ctx, 100, 100, 100, canvas);
+circle.setVelocity(15, 10);
 
 CanvasMainLoop = function() {
   Utils.ClearCanvas(ctx, canvas);
-  circle.defineFillStyle = "rgb(200, 0, 0)"
+  circle.defineFillStyle("rgb(200, 0, 0)");
   circle.draw();
-  circle.x += 5;
 
-  setTimeout(CanvasMainLoop, 60, ctx, canvas);
+  setTimeout(CanvasMainLoop, 5, ctx, canvas);
 }
 CanvasMainLoop();
