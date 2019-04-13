@@ -89,7 +89,7 @@ if (!ctx) {
 console.log("Context inited !!");
 
 
-const circle = new DrawObject.Circle(ctx, 100, 100, 100, canvas);
+const circle = new DrawObject.Circle(ctx, 100, 100, 50, canvas);
 circle.setVelocity(5, 5);
 let size = 5;
 let growingFactor = 5;
@@ -101,9 +101,9 @@ CanvasMainLoop = function() {
     growingFactor = -1;
   } else if (size < 5) {
     growingFactor = 1;
-  }
-  circle.reDefineSize(size);
+  }/*
   size += growingFactor;
-  setTimeout(CanvasMainLoop, 5, ctx, canvas);
+  circle.reDefineSize(size);*/
+  setTimeout(CanvasMainLoop, 60, ctx, canvas);
 }
 CanvasMainLoop();
