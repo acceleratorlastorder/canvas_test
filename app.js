@@ -19,10 +19,33 @@ const DrawObject = {
     this.fillStyle = null;
     this.canvasElement = canvasElement;
     this.diameter = this.radius * 2;
+    this.boundaryPoint = [];
     this.createShape = function() {
       context.beginPath();
       context.lineWidth = 1;
       context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    };
+    this.showcalculatedBoundary = function() {
+      if (this.boundaryPoint.length > 0) {
+        let tmp = null;
+        ctx.fillStyle = Utils.COLOR.black;
+        for (let i = this.boundaryPoint.length; i-- > 0;) {
+          tmp = this.boundaryPoint[i];
+          ctx.fillRect(tmp.x, tmp.y, 1, 1);
+        }
+        ctx.fillStyle = this.fillStyle;
+      }
+    };
+    this.calculateBoundary = function() {
+      this.boundaryPoint = [];
+      let testBoundaryPoint = {
+        x: this.x + this.radius,
+        y: this.y + this.radius
+      }
+      this.boundaryPoint.push({ x: this.x + this.radius, y: this.y });
+      this.boundaryPoint.push({ x: this.x - this.radius, y: this.y });
+      this.boundaryPoint.push({ x: this.x, y: this.y + this.radius });
+      this.boundaryPoint.push({ x: this.x, y: this.y - this.radius });
     };
     this.addBorder = function() {
       context.stroke();
@@ -49,7 +72,9 @@ const DrawObject = {
       }
       this.createShape();
       this.fillShape();
-      this.addBorder();
+      //this.addBorder();
+      this.calculateBoundary();
+      this.showcalculatedBoundary();
     };
     this.assignPositionFromVelocity = function() {
       this.x += this.Vx;
@@ -91,19 +116,24 @@ console.log("Context inited !!");
 
 const circle = new DrawObject.Circle(ctx, 100, 100, 50, canvas);
 circle.setVelocity(5, 5);
+circle.defineFillStyle("rgb(200, 0, 0)");
 let size = 5;
 let growingFactor = 5;
+let t1, t2;
 CanvasMainLoop = function() {
+  t1 = performance.now();
   Utils.ClearCanvas(ctx, canvas);
-  circle.defineFillStyle("rgb(200, 0, 0)");
   circle.draw();
   if (size > 100) {
     growingFactor = -1;
   } else if (size < 5) {
     growingFactor = 1;
-  }/*
-  size += growingFactor;
-  circle.reDefineSize(size);*/
+  }
+  /*
+    size += growingFactor;
+    circle.reDefineSize(size);*/
+  t2 = performance.now();
+  //console.log("loop took: ", t2 - t1, " ms");
   setTimeout(CanvasMainLoop, 60, ctx, canvas);
 }
 CanvasMainLoop();
