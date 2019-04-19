@@ -19,34 +19,42 @@ const DrawCommonObject = {
     this.fillStyle = null;
     this.canvasElement = canvasElement;
     this.diameter = this.radius * 2;
-    this.boundaryPoint = [];
-    this.boundaryBlocSize = 1;
+    this.boundaryPoints = [];
+    this.boundaryBlocSize = 2;
     this.createShape = function() {
       context.beginPath();
       context.lineWidth = 1;
       context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
     };
     this.showcalculatedBoundary = function() {
-      if (this.boundaryPoint.length > 0) {
+      if (this.boundaryPoints.length > 0) {
         let tmp = null;
         ctx.fillStyle = Utils.COLOR.black;
-        for (let i = this.boundaryPoint.length; i-- > 0;) {
-          tmp = this.boundaryPoint[i];
+        for (let i = this.boundaryPoints.length; i-- > 0;) {
+          tmp = this.boundaryPoints[i];
           ctx.fillRect(tmp.x, tmp.y, this.boundaryBlocSize, this.boundaryBlocSize);
         }
         ctx.fillStyle = this.fillStyle;
       }
     };
     this.calculateBoundary = function() {
-      this.boundaryPoint = [];
+      this.boundaryPoints = [];
       /**
        * [Add left right top bottom points of the circle]
        */
-      this.boundaryPoint.push({ x: this.x + this.radius - 1, y: this.y });
-      this.boundaryPoint.push({ x: this.x - this.radius, y: this.y });
-      this.boundaryPoint.push({ x: this.x, y: this.y + this.radius - 1 });
-      this.boundaryPoint.push({ x: this.x, y: this.y - this.radius });
+      this.boundaryPoints.push({ x: this.x + this.radius - 1, y: this.y });
+      this.boundaryPoints.push({ x: this.x - this.radius, y: this.y });
+      this.boundaryPoints.push({ x: this.x, y: this.y + this.radius - 1 });
+      this.boundaryPoints.push({ x: this.x, y: this.y - this.radius });
+      /*part of the circle PI/4, 3PI/4, 5*PI/4, 7*PI/4*/
+      this.boundaryPoints.push(this.getPointCoordinateInTheCirclePerimeter(this.radius, Math.PI / 4));
+      this.boundaryPoints.push(this.getPointCoordinateInTheCirclePerimeter(this.radius, 3 * Math.PI / 4));
+      this.boundaryPoints.push(this.getPointCoordinateInTheCirclePerimeter(this.radius, 5 * Math.PI / 4));
+      this.boundaryPoints.push(this.getPointCoordinateInTheCirclePerimeter(this.radius, 7 * Math.PI / 4));
     };
+    this.getPointCoordinateInTheCirclePerimeter = function(r, theta) {
+      return { x: this.x + (r * Math.cos(theta)), y: this.y + (r * Math.sin(theta)) };
+    }
     this.addBorder = function() {
       context.stroke();
     };
