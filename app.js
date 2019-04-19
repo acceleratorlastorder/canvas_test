@@ -9,7 +9,7 @@ const Utils = {
     black: "rgb(0, 0, 0)"
   }
 };
-const DrawObject = {
+const DrawCommonObject = {
   Circle: function Circle(context, x, y, radius, canvasElement) {
     this.x = x || 0;
     this.y = y || 0;
@@ -20,6 +20,7 @@ const DrawObject = {
     this.canvasElement = canvasElement;
     this.diameter = this.radius * 2;
     this.boundaryPoint = [];
+    this.boundaryBlocSize = 1;
     this.createShape = function() {
       context.beginPath();
       context.lineWidth = 1;
@@ -31,20 +32,19 @@ const DrawObject = {
         ctx.fillStyle = Utils.COLOR.black;
         for (let i = this.boundaryPoint.length; i-- > 0;) {
           tmp = this.boundaryPoint[i];
-          ctx.fillRect(tmp.x, tmp.y, 1, 1);
+          ctx.fillRect(tmp.x, tmp.y, this.boundaryBlocSize, this.boundaryBlocSize);
         }
         ctx.fillStyle = this.fillStyle;
       }
     };
     this.calculateBoundary = function() {
       this.boundaryPoint = [];
-      let testBoundaryPoint = {
-        x: this.x + this.radius,
-        y: this.y + this.radius
-      }
-      this.boundaryPoint.push({ x: this.x + this.radius, y: this.y });
+      /**
+       * [Add left right top bottom points of the circle]
+       */
+      this.boundaryPoint.push({ x: this.x + this.radius - 1, y: this.y });
       this.boundaryPoint.push({ x: this.x - this.radius, y: this.y });
-      this.boundaryPoint.push({ x: this.x, y: this.y + this.radius });
+      this.boundaryPoint.push({ x: this.x, y: this.y + this.radius - 1 });
       this.boundaryPoint.push({ x: this.x, y: this.y - this.radius });
     };
     this.addBorder = function() {
@@ -65,7 +65,7 @@ const DrawObject = {
       this.radius = rad;
     };
     this.draw = function() {
-      const collisionPos = this.isCollisionActive(this.canvasElement);
+      const collisionPos = this.isCanvasBorderCollisionActive(this.canvasElement);
       this.manageCollision(collisionPos);
       if (this.Vx != 0 || this.Vy != 0) {
         this.assignPositionFromVelocity();
@@ -81,14 +81,22 @@ const DrawObject = {
       this.y += this.Vy;
     };
     this.manageCollision = function(collisionPos) {
-      if (collisionPos.x != 0) {
-        this.Vx = collisionPos.x != 0 ? collisionPos.x : this.Vx;
+      if (collisionPos.x !== 0) {
+        this.Vx = collisionPos.x !== 0 ? collisionPos.x : this.Vx;
       }
-      if (collisionPos.y != 0) {
-        this.Vy = collisionPos.y != 0 ? collisionPos.y : this.Vy;
+      if (collisionPos.y !== 0) {
+        this.Vy = collisionPos.y !== 0 ? collisionPos.y : this.Vy;
       }
     }
     this.isCollisionActive = function() {
+      const result = {
+        x: 0,
+        y: 0
+      };
+
+      return result;
+    };
+    this.isCanvasBorderCollisionActive = function() {
       const result = {
         x: 0,
         y: 0
@@ -114,9 +122,9 @@ if (!ctx) {
 console.log("Context inited !!");
 
 
-const circle = new DrawObject.Circle(ctx, 100, 100, 50, canvas);
+const circle = new DrawCommonObject.Circle(ctx, 100, 100, 50, canvas);
 circle.setVelocity(5, 5);
-circle.defineFillStyle("rgb(200, 0, 0)");
+circle.defineFillStyle("rgb(225, 225, 225)");
 let size = 5;
 let growingFactor = 5;
 let t1, t2;
