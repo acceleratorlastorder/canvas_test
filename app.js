@@ -1,8 +1,16 @@
+const ITEMS = { GUIDS: [], contextObjects: [] };
 const Utils = {
-  generateRandomColor: function generateRandomColor() {
+  generateGUID: function generateGUID(amountToMake) {
+    for (let i = amountToMake; i-- > 0;) {
+      ITEMS.GUIDS.push(doGenerateGUID());
+    }
 
+    function doGenerateGUID() {
+      return "6666666";
+    }
   },
-  ClearCanvas: function(context, canvasElement) {
+  generateRandomColor: function generateRandomColor() {},
+  ClearCanvas: function ClearCanvas(context, canvasElement) {
     context.clearRect(0, 0, canvasElement.width, canvasElement.height);
   },
   COLOR: {
@@ -11,6 +19,8 @@ const Utils = {
 };
 const DrawCommonObject = {
   Circle: function Circle(context, x, y, radius, canvasElement) {
+    this.shapeType = "CIRCLE";
+    this.uniqueId = null;
     this.x = x || 0;
     this.y = y || 0;
     this.radius = radius || 0;
@@ -118,9 +128,15 @@ const DrawCommonObject = {
 
       return result;
     };
+    this.getUniqueId = function() {
+      if (ITEMS.GUIDS.length === 0) {
+        Utils.generateGUID(1);
+      }
+      this.uniqueId = ITEMS.GUIDS.pop();
+    }
+    this.getUniqueId();
   }
 };
-const ITEMS = {};
 const canvas = document.getElementById("canvas_1");
 const ctx = canvas.getContext ? canvas.getContext("2d") : null;
 
@@ -133,23 +149,33 @@ console.log("Context inited !!");
 const circle = new DrawCommonObject.Circle(ctx, 100, 100, 50, canvas);
 circle.setVelocity(5, 5);
 circle.defineFillStyle("rgb(225, 225, 225)");
+ITEMS.contextObjects.push(circle);
+
+const circleTwo = new DrawCommonObject.Circle(ctx, 100, 100, 50, canvas);
+circleTwo.setVelocity(1, 1);
+circleTwo.defineFillStyle("rgb(225, 225, 225)");
+ITEMS.contextObjects.push(circleTwo);
+
 let size = 5;
 let growingFactor = 5;
 let t1, t2;
 CanvasMainLoop = function() {
   t1 = performance.now();
   Utils.ClearCanvas(ctx, canvas);
-  circle.draw();
+  for (var i = 0; i < ITEMS.contextObjects.length; i++) {
+    ITEMS.contextObjects[i].draw();
+  }
   if (size > 100) {
     growingFactor = -1;
   } else if (size < 5) {
     growingFactor = 1;
   }
   /*
-    size += growingFactor;
-    circle.reDefineSize(size);*/
+  size += growingFactor;
+  circle.reDefineSize(size);
+  */
   t2 = performance.now();
-  //console.log("loop took: ", t2 - t1, " ms");
+  console.log("loop took: ", t2 - t1, " ms");
   setTimeout(CanvasMainLoop, 60, ctx, canvas);
 }
 CanvasMainLoop();
