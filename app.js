@@ -57,10 +57,12 @@ const DrawCommonObject = {
       this.boundaryPoints.push({ x: this.x, y: this.y + this.radius - 1 });
       this.boundaryPoints.push({ x: this.x, y: this.y - this.radius });
       /*part of the circle PI/4, 3PI/4, 5*PI/4, 7*PI/4*/
+
       this.boundaryPoints.push(this.getPointCoordinateInTheCirclePerimeter(this.radius, Math.PI / 4));
       this.boundaryPoints.push(this.getPointCoordinateInTheCirclePerimeter(this.radius, 3 * Math.PI / 4));
       this.boundaryPoints.push(this.getPointCoordinateInTheCirclePerimeter(this.radius, 5 * Math.PI / 4));
       this.boundaryPoints.push(this.getPointCoordinateInTheCirclePerimeter(this.radius, 7 * Math.PI / 4));
+
     };
     this.getPointCoordinateInTheCirclePerimeter = function(r, theta) {
       return { x: this.x + (r * Math.cos(theta)), y: this.y + (r * Math.sin(theta)) };
@@ -90,7 +92,7 @@ const DrawCommonObject = {
       }
       this.createShape();
       this.fillShape();
-      //this.addBorder();
+      /*this.addBorder();*/
       this.calculateBoundary();
       this.showcalculatedBoundary();
     };
@@ -165,12 +167,12 @@ CanvasMainLoop = function() {
   for (var i = 0; i < ITEMS.contextObjects.length; i++) {
     ITEMS.contextObjects[i].draw();
   }
+  /*
   if (size > 100) {
     growingFactor = -1;
   } else if (size < 5) {
     growingFactor = 1;
   }
-  /*
   size += growingFactor;
   circle.reDefineSize(size);
   */
