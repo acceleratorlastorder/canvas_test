@@ -1,4 +1,4 @@
-const ITEMS = { GUIDS: [], contextObjects: [] };
+const ITEMS = { INIT_DATE: new Date(), GUIDS: [], contextObjects: [] };
 const Utils = {
   generateGUID: function generateGUID(amountToMake) {
     for (let i = amountToMake; i-- > 0;) {
@@ -14,7 +14,8 @@ const Utils = {
     context.clearRect(0, 0, canvasElement.width, canvasElement.height);
   },
   COLOR: {
-    black: "rgb(0, 0, 0)"
+    black: "rgb(0, 0, 0)",
+    white: "rgb(255, 255, 255)"
   }
 };
 const DrawCommonObject = {
@@ -153,7 +154,7 @@ circle.setVelocity(5, 5);
 circle.defineFillStyle("rgb(225, 225, 225)");
 ITEMS.contextObjects.push(circle);
 
-const circleTwo = new DrawCommonObject.Circle(ctx, 100, 100, 50, canvas);
+const circleTwo = new DrawCommonObject.Circle(ctx, 250, 100, 50, canvas);
 circleTwo.setVelocity(1, 1);
 circleTwo.defineFillStyle("rgb(225, 225, 225)");
 ITEMS.contextObjects.push(circleTwo);
@@ -177,7 +178,7 @@ CanvasMainLoop = function() {
   circle.reDefineSize(size);
   */
   t2 = performance.now();
-  console.log("loop took: ", t2 - t1, " ms");
+  /*console.log("loop took: ", t2 - t1, " ms");*/
   setTimeout(CanvasMainLoop, 60, ctx, canvas);
 }
 CanvasMainLoop();
