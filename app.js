@@ -151,12 +151,12 @@ console.log("Context inited !!");
 
 const circle = new DrawCommonObject.Circle(ctx, 100, 100, 50, canvas);
 circle.setVelocity(5, 5);
-circle.defineFillStyle("rgb(225, 225, 225)");
+circle.defineFillStyle( Utils.COLOR.white);
 ITEMS.contextObjects.push(circle);
 
 const circleTwo = new DrawCommonObject.Circle(ctx, 250, 100, 50, canvas);
 circleTwo.setVelocity(1, 1);
-circleTwo.defineFillStyle("rgb(225, 225, 225)");
+circleTwo.defineFillStyle( Utils.COLOR.white);
 ITEMS.contextObjects.push(circleTwo);
 
 let size = 5;
